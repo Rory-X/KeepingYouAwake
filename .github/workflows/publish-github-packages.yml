@@ -1,0 +1,61 @@
+name: Publish GitHub Packages
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: publish-github-packages
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: windows-latest
+    env:
+      NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          registry-url: https://npm.pkg.github.com
+          scope: '@rory-x'
+      - name: Download and verify released Windows binaries
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $version = ([xml](Get-Content Directory.Build.props -Raw)).Project.PropertyGroup.Version
+          $archive = "KeepingYouAwake-$version-win-x64.zip"
+          $releaseUrl = "https://github.com/$env:GITHUB_REPOSITORY/releases/download/v$version"
+          New-Item -ItemType Directory -Path artifacts/download -Force | Out-Null
+          Invoke-WebRequest "$releaseUrl/$archive" -OutFile "artifacts/download/$archive"
+          Invoke-WebRequest "$releaseUrl/$archive.sha256" -OutFile "artifacts/download/$archive.sha256"
+          $expectedHash = (Get-Content "artifacts/download/$archive.sha256").Split(' ')[0]
+          if ((Get-FileHash "artifacts/download/$archive" -Algorithm SHA256).Hash.ToLowerInvariant() -ne $expectedHash) { throw 'Release checksum mismatch.' }
+          Expand-Archive "artifacts/download/$archive" -DestinationPath artifacts/publish
+          "PACKAGE_VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Append
+      - name: Build scoped npm package
+        shell: pwsh
+        run: ./scripts/Build-Npm.ps1 -SkipBuild -GitHubPackages
+      - name: Verify package installation and CLI
+        shell: pwsh
+        run: ./scripts/Test-Npm.ps1 -PackageName '@rory-x/keeping-you-awake'
+      - name: Publish and verify GitHub Packages version
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $archive = "artifacts/npm/rory-x-keeping-you-awake-$env:PACKAGE_VERSION.tgz"
+          npm publish $archive --registry=https://npm.pkg.github.com --access public
+          if ($LASTEXITCODE -ne 0) { throw 'GitHub Packages publication failed.' }
+          $remote = npm view "@rory-x/keeping-you-awake@$env:PACKAGE_VERSION" --json --registry=https://npm.pkg.github.com | ConvertFrom-Json
+          if ($LASTEXITCODE -ne 0) { throw 'Published version query failed.' }
+          $stream = [IO.File]::OpenRead((Resolve-Path $archive).Path)
+          $sha512 = [Security.Cryptography.SHA512]::Create()
+          try { $integrity = 'sha512-' + [Convert]::ToBase64String($sha512.ComputeHash($stream)) } finally { $stream.Dispose(); $sha512.Dispose() }
+          if ($remote.version -ne $env:PACKAGE_VERSION -or $remote.dist.integrity -ne $integrity) { throw 'Published package integrity mismatch.' }
+          npx --yes --prefer-online --registry=https://npm.pkg.github.com --package "@rory-x/keeping-you-awake@$env:PACKAGE_VERSION" kya --version --json
+          if ($LASTEXITCODE -ne 0) { throw 'Published package invocation failed.' }
+          "Published and verified @rory-x/keeping-you-awake@$env:PACKAGE_VERSION" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append

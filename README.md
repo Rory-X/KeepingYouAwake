@@ -46,6 +46,20 @@ npx --yes --package keeping-you-awake kya status --json
 
 npm 安装仅提供命令入口，不创建开始菜单入口或 Windows 卸载条目。首次控制命令会按需启动包内托盘程序；设置和日志仍保存在当前用户的本机目录。更新或卸载前，请先从托盘退出软件；卸载命令为 `npm uninstall -g keeping-you-awake`。如已安装桌面版，CLI 会连接同一用户下已运行的默认后台。
 
+### GitHub Packages
+
+GitHub Packages 使用作用域包名 `@rory-x/keeping-you-awake`，关联到本仓库。安装时需先配置该作用域的 registry，并通过具有 `read:packages` 权限的 GitHub 个人访问令牌完成认证（GitHub Packages 的 npm registry 安装需要认证）：
+
+```powershell
+npm login --scope=@rory-x --auth-type=legacy --registry=https://npm.pkg.github.com
+npm install -g @rory-x/keeping-you-awake@0.1.0 --registry=https://npm.pkg.github.com
+kya --version
+```
+
+登录时 Username 为 GitHub 用户名，Password 为 GitHub 令牌。
+
+生成 GitHub Packages 包：`./scripts/Build-Npm.ps1 -GitHubPackages`；已有发布程序时可加 `-SkipBuild`。产物为 `artifacts/npm/rory-x-keeping-you-awake-0.1.0.tgz`。使用 `./scripts/Test-Npm.ps1 -PackageName '@rory-x/keeping-you-awake'` 验证。仓库的 **Publish GitHub Packages** Actions 工作流会校验现有 Release 的 Windows 发布包、构建并测试作用域包，使用内置 `GITHUB_TOKEN` 发布到 GitHub Packages，再验证线上包的 SHA512 和 `npx` 调用。
+
 ### 桌面安装后的 CLI
 
 安装会将 CLI 目录加入当前用户 PATH。请打开新的终端；当前终端也可调用 `%LOCALAPPDATA%\Programs\KeepingYouAwake\kya.exe`。

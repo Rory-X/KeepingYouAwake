@@ -1,8 +1,11 @@
-param([string]$PackagePath)
+param([string]$PackagePath, [ValidateSet('keeping-you-awake', '@rory-x/keeping-you-awake')][string]$PackageName = 'keeping-you-awake')
 $ErrorActionPreference = 'Stop'
 $projectRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $version = ([xml](Get-Content -LiteralPath (Join-Path $projectRoot 'Directory.Build.props') -Raw)).Project.PropertyGroup.Version
-if (-not $PackagePath) { $PackagePath = Join-Path $projectRoot "artifacts/npm/keeping-you-awake-$version.tgz" }
+if (-not $PackagePath) {
+    $filePrefix = $PackageName.TrimStart('@').Replace('/', '-')
+    $PackagePath = Join-Path $projectRoot "artifacts/npm/$filePrefix-$version.tgz"
+}
 $tarballPath = (Resolve-Path -LiteralPath $PackagePath).Path
 $npmPath = (Get-Command npm.cmd -ErrorAction Stop).Source
 $npxPath = (Get-Command npx.cmd -ErrorAction Stop).Source
@@ -26,7 +29,7 @@ try {
     & $npmPath install --global --prefix $testDirectory $tarballPath --no-audit --no-fund
     if ($LASTEXITCODE -ne 0) { throw 'npm installation failed.' }
     $script:cliPath = Join-Path $testDirectory 'kya.cmd'
-    $nativeDirectory = Join-Path $testDirectory 'node_modules/keeping-you-awake/native'
+    $nativeDirectory = Join-Path $testDirectory "node_modules/$PackageName/native"
     $response = Call-Cli @('--version')
     Assert-That ($response.ExitCode -eq 0 -and $response.version -eq $version) 'installed command reports package version from a path containing spaces'
     $help = & $script:cliPath --help

@@ -1,4 +1,4 @@
-param([switch]$SkipBuild)
+param([switch]$SkipBuild, [switch]$GitHubPackages)
 $ErrorActionPreference = 'Stop'
 $projectRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $npmPath = (Get-Command npm.cmd -ErrorAction Stop).Source
@@ -16,6 +16,10 @@ New-Item -ItemType Directory -Path (Join-Path $packageDirectory 'native') -Force
 Copy-Item -LiteralPath (Join-Path $projectRoot 'npm/bin'), (Join-Path $projectRoot 'npm/scripts') -Destination $packageDirectory -Recurse
 $manifest = Get-Content -LiteralPath (Join-Path $projectRoot 'npm/package.json') -Raw | ConvertFrom-Json
 $manifest.version = $version
+if ($GitHubPackages) {
+    $manifest.name = '@rory-x/keeping-you-awake'
+    $manifest.publishConfig.registry = 'https://npm.pkg.github.com/'
+}
 [IO.File]::WriteAllText((Join-Path $packageDirectory 'package.json'), ($manifest | ConvertTo-Json -Depth 8), [Text.UTF8Encoding]::new($false))
 Copy-Item -LiteralPath (Join-Path $projectRoot 'README.md') -Destination $packageDirectory
 foreach ($binary in @('KeepingYouAwake.exe', 'kya.exe')) { Copy-Item -LiteralPath (Join-Path $publishDirectory $binary) -Destination (Join-Path $packageDirectory 'native') }
@@ -24,7 +28,8 @@ try {
     & $npmPath pack --pack-destination $outputDirectory
     if ($LASTEXITCODE -ne 0) { throw 'npm pack failed.' }
 } finally { Pop-Location }
-$tarballPath = Join-Path $outputDirectory "keeping-you-awake-$version.tgz"
+$filePrefix = $manifest.name.TrimStart('@').Replace('/', '-')
+$tarballPath = Join-Path $outputDirectory "$filePrefix-$version.tgz"
 $hash = (Get-FileHash -LiteralPath $tarballPath -Algorithm SHA256).Hash.ToLowerInvariant()
 "$hash  $([IO.Path]::GetFileName($tarballPath))" | Set-Content -LiteralPath "$tarballPath.sha256" -Encoding ASCII
 Write-Output "npm package: $tarballPath"
