@@ -1,6 +1,8 @@
 .tools/
 artifacts/
 **/bin/
+!npm/bin/
+!npm/bin/kya.cjs
 **/obj/
 .vs/
 *.user
