@@ -29,6 +29,25 @@ Windows 的手动睡眠、合盖和临界电量保护仍生效。电池供电的
 
 ## CLI
 
+### npm 安装与调用（Windows x64）
+
+npm 包名为 `keeping-you-awake`，命令为 `kya`。包内包含 CLI 和托盘程序，不需要安装 .NET；需要 Node.js 18 或更新版本及 Windows x64。
+
+包发布到 npm registry 后，可使用：
+
+```powershell
+npm install -g keeping-you-awake
+kya status --json
+# 不全局安装，临时调用：
+npx --yes --package keeping-you-awake kya status --json
+```
+
+也可从 [GitHub Release 下载 npm 安装包](https://github.com/Rory-X/KeepingYouAwake/releases/download/v0.1.0/keeping-you-awake-0.1.0.tgz)，运行 `npm install -g ./keeping-you-awake-0.1.0.tgz`。从源码打包后的本地安装命令为 `npm install -g ./artifacts/npm/keeping-you-awake-0.1.0.tgz`。
+
+npm 安装仅提供命令入口，不创建开始菜单入口或 Windows 卸载条目。首次控制命令会按需启动包内托盘程序；设置和日志仍保存在当前用户的本机目录。更新或卸载前，请先从托盘退出软件；卸载命令为 `npm uninstall -g keeping-you-awake`。如已安装桌面版，CLI 会连接同一用户下已运行的默认后台。
+
+### 桌面安装后的 CLI
+
 安装会将 CLI 目录加入当前用户 PATH。请打开新的终端；当前终端也可调用 `%LOCALAPPDATA%\Programs\KeepingYouAwake\kya.exe`。
 
 | 功能 | 说明 | CLI |
@@ -101,6 +120,12 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Install.ps1
 使用 .NET 10 SDK。`Build.ps1` 优先使用项目 `.tools/dotnet/dotnet.exe`，否则使用 PATH 中的 SDK。应用为 WPF + WinForms NotifyIcon，CLI 为独立控制台程序，核心状态机与平台接口分离。
 
 运行 `./scripts/Build.ps1` 会执行核心测试、Release 构建和自包含发布，并生成 `artifacts/release/KeepingYouAwake-0.1.0-win-x64.zip` 及 SHA256 校验文件。ZIP 包含托盘程序、CLI、README、安装和卸载脚本；`artifacts/publish` 保留可直接运行的发布目录。`-SkipPublish` 仅执行测试和构建，不生成发布包。
+
+生成 npm 包：`./scripts/Build-Npm.ps1`（包含完整构建），或在已有同版本发布程序时运行 `./scripts/Build-Npm.ps1 -SkipBuild`。产物为 `artifacts/npm/keeping-you-awake-0.1.0.tgz` 及 SHA256 校验文件。脚本从 `Directory.Build.props` 读取版本，并将两个自包含 EXE 打包；安装时无需额外下载程序。
+
+验证 npm 包：`./scripts/Test-Npm.ps1`。该脚本在隔离目录安装 `.tgz`，验证 `kya` 命令、参数与退出码、模拟后台通信及 `npx` 调用，不操作真实电源。
+
+发布到 npm registry：先运行 `npm login --registry=https://registry.npmjs.org`，再执行 `npm publish ./artifacts/npm/keeping-you-awake-0.1.0.tgz --access public --registry=https://registry.npmjs.org`。不要直接发布 `npm` 源码目录，该目录尚未包含程序文件。
 
 ```powershell
 ./scripts/Build.ps1 -SkipPublish

@@ -1,0 +1,25 @@
+{
+  "name": "keeping-you-awake",
+  "version": "0.1.0",
+  "description": "Windows tray power manager and kya CLI: keep awake and schedule cancellable shutdowns.",
+  "bin": {
+    "kya": "bin/kya.cjs"
+  },
+  "files": ["bin/kya.cjs", "scripts/verify.cjs", "native/*.exe", "README.md"],
+  "os": ["win32"],
+  "cpu": ["x64"],
+  "engines": { "node": ">=18" },
+  "scripts": {
+    "prepack": "node scripts/verify.cjs",
+    "prepublishOnly": "node scripts/verify.cjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Rory-X/KeepingYouAwake.git",
+    "directory": "npm"
+  },
+  "homepage": "https://github.com/Rory-X/KeepingYouAwake#readme",
+  "bugs": { "url": "https://github.com/Rory-X/KeepingYouAwake/issues" },
+  "keywords": ["windows", "cli", "keep-awake", "shutdown", "tray"],
+  "publishConfig": { "access": "public", "registry": "https://registry.npmjs.org/" }
+}
