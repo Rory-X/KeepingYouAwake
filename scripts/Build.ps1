@@ -22,6 +22,16 @@ try {
         }
         Copy-Item -LiteralPath (Join-Path $projectRoot 'README.md') -Destination $publishDirectory -Force
         Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'Uninstall.ps1') -Destination $publishDirectory -Force
+        Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'Install.ps1') -Destination $publishDirectory -Force
+        $version = ([xml](Get-Content -LiteralPath (Join-Path $projectRoot 'Directory.Build.props') -Raw)).Project.PropertyGroup.Version
+        $releaseDirectory = Join-Path $projectRoot 'artifacts/release'
+        New-Item -ItemType Directory -Path $releaseDirectory -Force | Out-Null
+        $archivePath = Join-Path $releaseDirectory "KeepingYouAwake-$version-win-x64.zip"
+        $releaseFiles = @('KeepingYouAwake.exe', 'kya.exe', 'README.md', 'Install.ps1', 'Uninstall.ps1') | ForEach-Object { Join-Path $publishDirectory $_ }
+        Compress-Archive -LiteralPath $releaseFiles -DestinationPath $archivePath -Force
+        $hash = (Get-FileHash -LiteralPath $archivePath -Algorithm SHA256).Hash.ToLowerInvariant()
+        "$hash  $([System.IO.Path]::GetFileName($archivePath))" | Set-Content -LiteralPath "$archivePath.sha256" -Encoding ASCII
         Write-Output "Published: $publishDirectory"
+        Write-Output "Release: $archivePath"
     }
 } finally { Pop-Location }

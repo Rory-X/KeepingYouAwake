@@ -13,6 +13,6 @@
      </StackPanel>
    </Border>
    <TextBlock Text="防休眠针对系统空闲睡眠。手动睡眠、合盖及低电量保护仍由 Windows 处理；电池供电时可能受系统待机策略限制。" TextWrapping="Wrap" FontSize="12" Foreground="{StaticResource Muted}" Margin="0,18,0,0" />
-   <TextBlock Text="KeepingYouAwake 1.0.0 · 本机运行" FontSize="11" Foreground="#859183" Margin="0,18,0,0" />
+   <TextBlock Text="KeepingYouAwake 0.1.0 · 本机运行" FontSize="11" Foreground="#859183" Margin="0,18,0,0" />
  </StackPanel>
 </Window>

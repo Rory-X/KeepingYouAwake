@@ -1,4 +1,4 @@
-﻿param([string]$Source = (Join-Path $PSScriptRoot '../artifacts/publish'), [switch]$NoLaunch)
+param([string]$Source = $(if (Test-Path -LiteralPath (Join-Path $PSScriptRoot 'KeepingYouAwake.exe')) { $PSScriptRoot } else { Join-Path $PSScriptRoot '../artifacts/publish' }), [switch]$NoLaunch)
 $ErrorActionPreference = 'Stop'
 $sourcePath = (Resolve-Path -LiteralPath $Source).Path
 $installDirectory = [System.IO.Path]::GetFullPath((Join-Path $env:LOCALAPPDATA 'Programs/KeepingYouAwake'))
@@ -51,11 +51,11 @@ $broadcastResult = [UIntPtr]::Zero
 # Register in Windows Installed Apps; no elevation and no automatic startup.
 $uninstallKey = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\KeepingYouAwake'
 New-Item -Path $uninstallKey -Force | Out-Null
-$properties = @{ DisplayName = 'KeepingYouAwake'; DisplayVersion = '1.0.0'; Publisher = 'KeepingYouAwake'; InstallLocation = $installDirectory; DisplayIcon = "$installDirectory\KeepingYouAwake.exe,0"; UninstallString = "powershell.exe -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$installDirectory\Uninstall.ps1`"" }
+$properties = @{ DisplayName = 'KeepingYouAwake'; DisplayVersion = '0.1.0'; Publisher = 'KeepingYouAwake'; InstallLocation = $installDirectory; DisplayIcon = "$installDirectory\KeepingYouAwake.exe,0"; UninstallString = "powershell.exe -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$installDirectory\Uninstall.ps1`"" }
 foreach ($name in $properties.Keys) { New-ItemProperty -Path $uninstallKey -Name $name -Value $properties[$name] -PropertyType String -Force | Out-Null }
 New-ItemProperty -Path $uninstallKey -Name 'NoModify' -Value 1 -PropertyType DWord -Force | Out-Null
 New-ItemProperty -Path $uninstallKey -Name 'NoRepair' -Value 1 -PropertyType DWord -Force | Out-Null
-[ordered]@{ Version = '1.0.0'; InstalledUtc = [DateTime]::UtcNow.ToString('o'); Source = $sourcePath } | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $installDirectory 'installation.json') -Encoding UTF8
+[ordered]@{ Version = '0.1.0'; InstalledUtc = [DateTime]::UtcNow.ToString('o'); Source = $sourcePath } | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $installDirectory 'installation.json') -Encoding UTF8
 if (-not $NoLaunch) { Start-Process -FilePath (Join-Path $installDirectory 'KeepingYouAwake.exe') -ArgumentList '--show' -WorkingDirectory $installDirectory -WindowStyle Hidden }
 Write-Output "Installed: $installDirectory"
 Write-Output "CLI: $installDirectory\kya.exe (kya in newly opened terminals)"

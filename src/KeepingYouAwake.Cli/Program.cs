@@ -13,7 +13,7 @@ try
     if (parsed.Help)
     {
         Console.WriteLine("""
-            KeepingYouAwake CLI 1.0.0
+            KeepingYouAwake CLI 0.1.0
 
             kya status [--json]                         查询后台状态
             kya awake on [--for 2h] [--screen-on]         开启防休眠；默认持续开启
@@ -31,7 +31,7 @@ try
             """);
         return 0;
     }
-    if (parsed.Version) { Console.WriteLine(parsed.Json ? "{\"version\":\"1.0.0\"}" : "KeepingYouAwake 1.0.0"); return 0; }
+    if (parsed.Version) { Console.WriteLine(parsed.Json ? "{\"version\":\"0.1.0\"}" : "KeepingYouAwake 0.1.0"); return 0; }
     var key = Wire.InstanceKey(WindowsIdentity.GetCurrent().User!.Value, parsed.Instance);
     NamedPipeClientStream? pipe = await Connect(key, 600);
     if (pipe is null && parsed.Instance == "default")

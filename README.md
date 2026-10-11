@@ -2,6 +2,8 @@
 
 Windows 11 中文托盘工具：防自动休眠、定时关机，以及供 AI / 脚本使用的本机 CLI。
 
+当前版本：**0.1.0**。[下载 GitHub Release](https://github.com/Rory-X/KeepingYouAwake/releases/tag/v0.1.0)。发布包：`KeepingYouAwake-0.1.0-win-x64.zip`（Windows x64，自包含，无需安装 .NET）。
+
 ## 功能说明
 
 从开始菜单打开 **KeepingYouAwake**，通过咖啡托盘图标控制电脑电源。
@@ -77,6 +79,16 @@ JSON 顶层字段为 `success`、`code`、`message`、`state`。状态包含 `aw
 
 发布目录中的两个 EXE 为 Windows x64 自包含程序，无需用户安装 .NET。安装目标为 `%LOCALAPPDATA%\Programs\KeepingYouAwake`，设置和轮转日志在 `%LOCALAPPDATA%\KeepingYouAwake\data`。
 
+使用 release 发布包：解压 `KeepingYouAwake-0.1.0-win-x64.zip`，在解压目录打开 PowerShell，运行以下命令安装（无需管理员权限）：
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Install.ps1
+```
+
+也可以直接运行解压目录中的 `KeepingYouAwake.exe`，并通过 `./kya.exe` 使用 CLI。便携运行不会创建开始菜单入口或添加 PATH。两个 EXE 需放在同一目录。可用 `Get-FileHash .\KeepingYouAwake-0.1.0-win-x64.zip -Algorithm SHA256` 与发布包旁的 `.zip.sha256` 文件核对。
+
+从源码构建并安装：
+
 ```powershell
 ./scripts/Build.ps1
 ./scripts/Install.ps1
@@ -87,6 +99,8 @@ JSON 顶层字段为 `success`、`code`、`message`、`state`。状态包含 `aw
 ## 开发与验证
 
 使用 .NET 10 SDK。`Build.ps1` 优先使用项目 `.tools/dotnet/dotnet.exe`，否则使用 PATH 中的 SDK。应用为 WPF + WinForms NotifyIcon，CLI 为独立控制台程序，核心状态机与平台接口分离。
+
+运行 `./scripts/Build.ps1` 会执行核心测试、Release 构建和自包含发布，并生成 `artifacts/release/KeepingYouAwake-0.1.0-win-x64.zip` 及 SHA256 校验文件。ZIP 包含托盘程序、CLI、README、安装和卸载脚本；`artifacts/publish` 保留可直接运行的发布目录。`-SkipPublish` 仅执行测试和构建，不生成发布包。
 
 ```powershell
 ./scripts/Build.ps1 -SkipPublish
@@ -104,4 +118,4 @@ JSON 顶层字段为 `success`、`code`、`message`、`state`。状态包含 `aw
 
 真实关机通过 `InitiateSystemShutdownExW`，不强制关闭应用。60 秒取消窗口由后台管理，不使用会隐含强制关机的 `shutdown.exe /t`。防休眠调用线程始终由同一个 WPF dispatcher 持有；退出时释放请求。
 
-本仓库不含云服务、远程控制入口或自动上传日志。公开发布前可以添加代码签名及安装包分发；当前提供本机安装和便携发布目录。
+本仓库不含云服务、远程控制入口或自动上传日志。当前发布包未做代码签名，提供本机安装脚本和便携运行方式。
