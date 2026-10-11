@@ -1,0 +1,10 @@
+<Window x:Class="KeepingYouAwake.App.CountdownWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ Title="即将关机 · KeepingYouAwake" Width="410" Height="340" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" Topmost="True" Icon="Assets/coffee-solid.ico" Style="{StaticResource {x:Type Window}}">
+ <StackPanel Margin="28,24">
+   <TextBlock Text="电脑即将关机" FontSize="21" FontWeight="SemiBold" HorizontalAlignment="Center" />
+   <TextBlock x:Name="Seconds" Text="60" FontFamily="Segoe UI" FontSize="62" FontWeight="Light" HorizontalAlignment="Center" Margin="0,8,0,0" />
+   <TextBlock Text="秒后向 Windows 提交关机请求" Foreground="{StaticResource Muted}" HorizontalAlignment="Center" />
+   <Button Content="取消关机" Style="{StaticResource PrimaryButton}" Click="CancelClick" Margin="0,20,0,12" />
+   <TextBlock Text="默认不强制关闭程序；未保存内容可阻止关机。" TextWrapping="Wrap" FontSize="11" Foreground="{StaticResource Muted}" HorizontalAlignment="Center" />
+ </StackPanel>
+</Window>

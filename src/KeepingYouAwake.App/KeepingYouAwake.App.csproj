@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <AssemblyName>KeepingYouAwake</AssemblyName>
+    <ApplicationIcon>Assets/coffee-solid.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ImplicitUsings>disable</ImplicitUsings>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../KeepingYouAwake.Core/KeepingYouAwake.Core.csproj" />
+    <Resource Include="Assets/*.ico" />
+    <Using Include="System" /><Using Include="System.IO" /><Using Include="System.Linq" />
+    <Using Include="System.Collections.Generic" /><Using Include="System.Threading" /><Using Include="System.Threading.Tasks" />
+  </ItemGroup>
+</Project>

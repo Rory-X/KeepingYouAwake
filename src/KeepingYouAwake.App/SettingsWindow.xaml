@@ -1,0 +1,18 @@
+<Window x:Class="KeepingYouAwake.App.SettingsWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ Title="设置与 CLI · KeepingYouAwake" Width="465" Height="510" ResizeMode="NoResize" WindowStartupLocation="CenterOwner" Icon="Assets/coffee-solid.ico" Style="{StaticResource {x:Type Window}}">
+ <StackPanel Margin="25,22">
+   <TextBlock Text="设置与 CLI" FontSize="22" FontWeight="SemiBold" Margin="0,0,0,20" />
+   <CheckBox x:Name="Startup" Content="登录 Windows 后自动启动" Click="StartupClick" />
+   <TextBlock Text="启动后驻留托盘，手动防休眠默认关闭。" Foreground="{StaticResource Muted}" FontSize="12" Margin="22,8,0,20" />
+   <Border Background="White" CornerRadius="12" Padding="16">
+     <StackPanel>
+       <TextBlock Text="让 AI 在任务结束后关机" FontSize="15" FontWeight="SemiBold" />
+       <TextBlock Text="任务成功完成后运行以下命令。60 秒内可在托盘取消；查询状态可使用 kya status --json。" TextWrapping="Wrap" Margin="0,9,0,12" Foreground="{StaticResource Muted}" />
+       <TextBox Text="kya shutdown --json" IsReadOnly="True" FontFamily="Consolas" AutomationProperties.Name="AI 关机命令" />
+       <Button Content="复制命令" Click="CopyClick" HorizontalAlignment="Right" Margin="0,10,0,0" Padding="12,7" />
+     </StackPanel>
+   </Border>
+   <TextBlock Text="防休眠针对系统空闲睡眠。手动睡眠、合盖及低电量保护仍由 Windows 处理；电池供电时可能受系统待机策略限制。" TextWrapping="Wrap" FontSize="12" Foreground="{StaticResource Muted}" Margin="0,18,0,0" />
+   <TextBlock Text="KeepingYouAwake 1.0.0 · 本机运行" FontSize="11" Foreground="#859183" Margin="0,18,0,0" />
+ </StackPanel>
+</Window>

@@ -1,0 +1,76 @@
+<Window x:Class="KeepingYouAwake.App.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  Title="KeepingYouAwake · 咖啡" Width="490" Height="740" MinWidth="470" MinHeight="680" ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen" Icon="Assets/coffee-solid.ico" Style="{StaticResource {x:Type Window}}">
+  <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+    <StackPanel Margin="24,22,24,18">
+      <Grid Margin="0,0,0,20">
+        <Grid.ColumnDefinitions><ColumnDefinition /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+        <StackPanel><TextBlock Text="KeepingYouAwake" FontFamily="Segoe UI" FontSize="23" FontWeight="SemiBold" />
+          <TextBlock Text="让电脑按你的节奏休息" Foreground="{StaticResource Muted}" Margin="0,5,0,0" /></StackPanel>
+        <Button Grid.Column="1" Content="设置" Click="SettingsClick" Padding="12,8" VerticalAlignment="Center" />
+      </Grid>
+      <Border Background="#E6EEDF" CornerRadius="15" Padding="20" Margin="0,0,0,14">
+        <StackPanel>
+          <Grid>
+            <Grid.ColumnDefinitions><ColumnDefinition Width="66" /><ColumnDefinition /></Grid.ColumnDefinitions>
+            <Border Background="#F5F7EF" CornerRadius="12" Width="52" Height="56" HorizontalAlignment="Left">
+              <Viewbox Width="36" Height="36">
+                <Canvas Width="48" Height="48">
+                  <Path x:Name="CoffeeCup" Data="M7,17 L32,17 L32,30 Q32,38 23,38 L16,38 Q7,38 7,30 Z" Stroke="#315D45" StrokeThickness="2.7" Fill="Transparent" />
+                  <Path Data="M33,19 L36,19 C45,19 45,31 34,31 M5,42 L36,42 M14,12 C8,7 19,5 14,1 M24,12 C18,7 29,5 24,1" Stroke="#315D45" StrokeThickness="2.7" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
+                </Canvas>
+              </Viewbox>
+            </Border>
+            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+              <TextBlock x:Name="AwakeTitle" Text="防休眠已关闭" FontSize="19" FontWeight="SemiBold" />
+              <TextBlock x:Name="AwakeDetail" Text="电脑遵循 Windows 电源设置" Foreground="{StaticResource Muted}" Margin="0,6,0,0" TextWrapping="Wrap" />
+            </StackPanel>
+          </Grid>
+          <Grid Margin="0,18,0,12">
+            <Grid.ColumnDefinitions><ColumnDefinition /><ColumnDefinition Width="12" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+            <ComboBox x:Name="AwakeDuration" SelectedIndex="0" AutomationProperties.Name="防休眠持续时长">
+              <ComboBoxItem Content="持续开启" Tag="0" /><ComboBoxItem Content="30 分钟" Tag="30" />
+              <ComboBoxItem Content="1 小时" Tag="60" /><ComboBoxItem Content="2 小时" Tag="120" />
+              <ComboBoxItem Content="4 小时" Tag="240" /><ComboBoxItem Content="自定义分钟" Tag="custom" />
+            </ComboBox>
+            <Button x:Name="AwakeToggle" Grid.Column="2" Content="开启防休眠" Style="{StaticResource PrimaryButton}" Click="AwakeClick" Padding="15,9" />
+          </Grid>
+          <StackPanel x:Name="CustomAwakeRow" Orientation="Horizontal" Margin="0,0,0,12" Visibility="Collapsed">
+            <TextBox x:Name="CustomAwakeMinutes" Text="120" Width="90" AutomationProperties.Name="自定义防休眠分钟" /><TextBlock Text="分钟" VerticalAlignment="Center" Margin="10,0,0,0" />
+          </StackPanel>
+          <CheckBox x:Name="KeepScreen" Content="同时保持屏幕亮起" Click="ScreenClick" />
+        </StackPanel>
+      </Border>
+      <Border Background="White" BorderBrush="#E1E6DC" BorderThickness="1" CornerRadius="15" Padding="20" Margin="0,0,0,14">
+        <StackPanel>
+          <Grid Margin="0,0,0,14"><TextBlock Text="定时关机" FontSize="17" FontWeight="SemiBold" />
+            <TextBlock Text="最后 60 秒可取消" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="{StaticResource Muted}" FontSize="11" /></Grid>
+          <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+            <RadioButton x:Name="DelayMode" Content="倒计时" GroupName="schedule" IsChecked="True" Margin="0,0,24,0" />
+            <RadioButton x:Name="AtMode" Content="指定日期时间" GroupName="schedule" />
+          </StackPanel>
+          <Grid x:Name="DelayRow" Margin="0,0,0,12">
+            <Grid.ColumnDefinitions><ColumnDefinition Width="110" /><ColumnDefinition /></Grid.ColumnDefinitions>
+            <TextBox x:Name="DelayMinutes" Text="30" AutomationProperties.Name="关机倒计时分钟" />
+            <TextBlock Grid.Column="1" Text="分钟后开始关机倒计时" VerticalAlignment="Center" Margin="10,0,0,0" FontSize="12" />
+          </Grid>
+          <Grid x:Name="AtRow" Margin="0,0,0,12" Visibility="Collapsed">
+            <Grid.ColumnDefinitions><ColumnDefinition /><ColumnDefinition Width="12" /><ColumnDefinition Width="85" /></Grid.ColumnDefinitions>
+            <DatePicker x:Name="ShutdownDate" VerticalContentAlignment="Center" SelectedDateFormat="Short" AutomationProperties.Name="关机日期" />
+            <TextBox x:Name="ShutdownTime" Grid.Column="2" Text="23:00" AutomationProperties.Name="关机时间" />
+          </Grid>
+          <Button Content="安排关机" Click="ScheduleClick" HorizontalAlignment="Stretch" />
+          <Border Background="#F6F7F2" CornerRadius="9" Padding="12" Margin="0,14,0,0">
+            <Grid>
+              <Grid.ColumnDefinitions><ColumnDefinition /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+              <StackPanel VerticalAlignment="Center"><TextBlock x:Name="PlanTitle" Text="暂无关机计划" FontWeight="SemiBold" />
+                <TextBlock x:Name="PlanDetail" Text="等待期间自动防休眠，屏幕可熄灭" Foreground="{StaticResource Muted}" FontSize="11" Margin="0,5,0,0" TextWrapping="Wrap" /></StackPanel>
+              <Button x:Name="CancelPlan" Grid.Column="1" Content="取消" Click="CancelClick" Padding="12,7" Margin="10,0,0,0" IsEnabled="False" VerticalAlignment="Center" />
+            </Grid>
+          </Border>
+        </StackPanel>
+      </Border>
+      <TextBlock x:Name="Message" Text="已就绪" TextWrapping="Wrap" FontSize="12" Foreground="{StaticResource Muted}" Margin="2,0,2,8" />
+      <TextBlock Text="关闭窗口后继续驻留托盘 · CLI：kya --help" TextWrapping="Wrap" FontSize="11" Foreground="#859183" Margin="2,0,2,0" />
+    </StackPanel>
+  </ScrollViewer>
+</Window>
