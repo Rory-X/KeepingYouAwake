@@ -48,7 +48,7 @@ npm 安装仅提供命令入口，不创建开始菜单入口或 Windows 卸载�
 
 ### GitHub Packages
 
-GitHub Packages 使用作用域包名 `@rory-x/keeping-you-awake`，关联到本仓库。安装时需先配置该作用域的 registry，并通过具有 `read:packages` 权限的 GitHub 个人访问令牌完成认证（GitHub Packages 的 npm registry 安装需要认证）：
+已发布到 [GitHub Packages](https://github.com/Rory-X/KeepingYouAwake/pkgs/npm/keeping-you-awake)，包名为 `@rory-x/keeping-you-awake`，当前版本 `0.1.0`，关联到本仓库。安装时需先配置该作用域的 registry，并通过具有 `read:packages` 权限的 GitHub 个人访问令牌完成认证（GitHub Packages 的 npm registry 安装需要认证）：
 
 ```powershell
 npm login --scope=@rory-x --auth-type=legacy --registry=https://npm.pkg.github.com
