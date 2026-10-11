@@ -31,9 +31,9 @@ Windows 的手动睡眠、合盖和临界电量保护仍生效。电池供电的
 
 ### npm 安装与调用（Windows x64）
 
-npm 包名为 `keeping-you-awake`，命令为 `kya`。包内包含 CLI 和托盘程序，不需要安装 .NET；需要 Node.js 18 或更新版本及 Windows x64。
+npm 包：[keeping-you-awake](https://www.npmjs.com/package/keeping-you-awake)，当前版本 `0.1.0`，命令为 `kya`。包内包含 CLI 和托盘程序，不需要安装 .NET；需要 Node.js 18 或更新版本及 Windows x64。
 
-包发布到 npm registry 后，可使用：
+从 npm registry 安装或临时调用：
 
 ```powershell
 npm install -g keeping-you-awake
